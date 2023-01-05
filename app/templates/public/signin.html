@@ -1,36 +1,26 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
-    <title>AKIBA home</title>
-</head>
-<body>
-    <div class="header"> 
-    <h1>AKIBA</h1>
-    </div>
-    <!-- TODO: add intro to AKIBA, what is it? -->
-    <form action="action_page">
-        <div class="container">
-            <h1>Sign In</h1>
-            <p>Welcome back! Please sign in to continue.</p>
-            <hr>
-        
-            <label for="email"><b>Email</b></label>
-            <input type="text" placeholder="Enter Email" name="email" id="email" required>
-        
-            <label for="psw"><b>Password</b></label>
-            <input type="password" placeholder="Enter Password" name="psw" id="psw" required>
-        
-            <hr>
-      
-            <button type="submit" class="registerbtn">Sign In</button>
-        </div>
-        <div class="container signin">
-          <p>Don't have an account? <a href="/">Register</a>.</p>
-        </div>
-      </form>     
-</body>
-</html>
+{% extends "public/templates/public_template.html" %}
+
+{% block title %}signin_form{% endblock %}
+
+{% block main %}
+<form action="action_page">
+  <div class="container">
+      <h1>Sign In</h1>
+      <p>Welcome back! Please sign in to continue.</p>
+      <hr>
+  
+      <label for="email"><b>Email</b></label>
+      <input type="text" placeholder="Enter Email" name="email" id="email" required>
+  
+      <label for="psw"><b>Password</b></label>
+      <input type="password" placeholder="Enter Password" name="psw" id="psw" required>
+  
+      <hr>
+
+      <button type="submit" class="registerbtn">Sign In</button>
+  </div>
+  <div class="container signin">
+    <p>Don't have an account? <a href="/register">Register</a>.</p>
+  </div>
+</form>
+{% endblock %}
