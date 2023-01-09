@@ -10,6 +10,7 @@
     <h1>Login</h1>
     <p>Welcome back! Please sign in to continue.</p>
     <hr>
+
       <div class="form-group">
         {{ form.email.label(class="form-control-label") }}
         {% if form.email.errors %}
@@ -37,12 +38,13 @@
       {{ form.password(class="form-control form-control-lg") }}
       {% endif %}
     </div>
+
     <div class="form-check">
       {{ form.remember(class="form-check-input") }}
       {{ form.remember.label(class="form-check-label") }}
     </div>
     <hr>
-       <div class="form-group">
+       <div class="registerbtn">
       {{ form.submit(class="btn btn-outline-info") }}
     </div>
     <small class="text-muted ml-2">
@@ -50,7 +52,7 @@
     </small>
   </div>
   <div class="container signin col-md-8">
-    <p>Don't have an account? <a href="{{ url_for('register') }}">Sign Up.</a>.</p>
+    <p>Don't have an account? <a href="{{ url_for('register') }}">Sign Up.</a></p>
   </div>
 </form>
 {% endblock %}
