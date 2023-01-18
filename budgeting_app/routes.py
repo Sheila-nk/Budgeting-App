@@ -60,13 +60,17 @@ def user_dashboard():
         budget = Budget(deposit=depositform.deposit.data, user_id=current_user.id)
         db.session.add(budget)
         db.session.commit()
+        flash('Deposit added!', 'success')
+        return redirect(url_for('user_dashboard'))
          
     if spendingform.category.data and spendingform.amount.data and spendingform.validate_on_submit():
         budget = Budget(category=spendingform.category.data, amount=spendingform.amount.data, user_id=current_user.id)
         db.session.add(budget)
         db.session.commit()
+        flash('Withdrawal added!', 'success')
+        return redirect(url_for('user_dashboard'))
 
-    
-    result = Budget.query.with_entities(Budget.deposit, Budget.category, Budget.amount)
+    headings = ('Date Posted','Deposits', 'Categories', 'Withdrawals')
+    result = Budget.query.with_entities(Budget.date_posted, Budget.deposit, Budget.category, Budget.amount)
 
-    return render_template("public/dashboard.html", depositform=depositform, spendingform=spendingform, result=result)
+    return render_template("public/dashboard.html", depositform=depositform, spendingform=spendingform, result=result, headings=headings)

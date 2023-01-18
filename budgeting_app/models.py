@@ -1,3 +1,4 @@
+from datetime import datetime
 from budgeting_app import db, login_manager
 from flask_login import UserMixin
 
@@ -18,6 +19,7 @@ class User(db.Model, UserMixin):
    
 class Budget(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    date_posted = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     deposit = db.Column(db.Integer)
     category = db.Column(db.String(20))
     amount = db.Column(db.Integer)
@@ -25,7 +27,7 @@ class Budget(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
     def __repr__(self):
-        return f"Budget('{self.deposit}', '{self.category}', '{self.amount}')"
+        return f"Budget('{self.date_posted}', '{self.deposit}', '{self.category}', '{self.amount}')"
 
 """
 To create the database

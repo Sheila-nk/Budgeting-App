@@ -51,6 +51,7 @@ hr {
   cursor: pointer;
   width: 100%;
   opacity: 0.9;
+  margin-bottom: 20px;
 }
 
 .registerbtn:hover {
@@ -59,8 +60,7 @@ hr {
 
 /* Add a blue text color to links */
 a {
-  color: dodgerblue;
-  
+  color: dodgerblue; 
 }
 
 /* Set a grey background color and center the text of the "sign in" section */
@@ -68,8 +68,23 @@ a {
   width: 100%;
   text-align: center;
   padding: 0;
-} 
+}
 
-tr:nth-child(even) {
+table {
+  border: 1px solid #f1f1f1;
+  border-spacing: 0;
+  background-color: #f1f1f1
+}
+
+.table_row:nth-child(even) {
   background-color: #e5e5e5;
+}
+
+.table_header {
+  text-align: left;
+}
+
+.table_cell {
+  padding: 10px;
+  text-align: center;
 }

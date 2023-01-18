@@ -7,18 +7,15 @@
 <div class="container">
     <h1>DashBoard</h1>
     <hr>
-    <h2>Monthly Budget</h2>
     <div class="row">
         <div class="col-md-4">
             <form method="POST" action="">
                 <!-- adds a csrf(cross-site request forgery) token -->
                 {{ depositform.hidden_tag() }}
-                <p>Track Deposits</p>
-                <hr>
+                <h3>Track Deposits</h3>
                 <div class="form-group">
                     {{ depositform.deposit.label(class="form-control-label") }}
                     {{ depositform.deposit(class="form-control form-control-lg") }}
-                    {{ depositform.deposit.data }}
                 </div>
                 <div class="registerbtn">
                     {{ depositform.submit(class="btn btn-outline-info") }}
@@ -28,18 +25,15 @@
         <div class="col-md-8">
             <form method="POST" , action="">
                 {{ spendingform.hidden_tag() }}
-                <p>Track Withdrawals</p>
-                <hr>
+                <h3>Track Withdrawals</h3>
                 <div class="row">
                     <div class="form-group col">
                         {{ spendingform.category.label(class="form-control-label") }}
                         {{ spendingform.category(class="form-control form-control-lg") }}
-                        {{ spendingform.category.data }}
                     </div>
                     <div class="form-group col">
                         {{ spendingform.amount.label(class="form-control-label") }}
                         {{ spendingform.amount(class="form-control form-control-lg") }}
-                        {{ spendingform.amount.data }}
                     </div>
                 </div>
                 <div class="registerbtn">
@@ -48,20 +42,23 @@
             </form>
         </div>
     </div>
-
+    <hr>
     <h2>Cashflow Statement</h2>
-    <table>
-        <tr>
-            <th>Deposits</th>
-            <th>Categories</th>
-            <th>Withdrawals</th>
+    <table class="table">
+        <tr class="table_header">
+            {% for header in headings %}
+            <th class="table_cell">{{ header }}</th>
+            {% endfor %}
         </tr>
         {% for row in result %}
-        <tr>
+        <tr class="table_row">
         {% for cell in row %}
-        <td>
+        <!-- TODO: REMOVE TIME IN STATEMENT -->
+        <td class="table_cell">
             {% if cell == None %}
                 {{ "-" }}
+            {% elif cell == result.date_posted %}
+                {{ result.date_posted.strftime('%Y-%m-%d') }}
             {% else %}
                 {{ cell }}
             {% endif %}
