@@ -4,6 +4,9 @@ from budgeting_app.models import User, Budget
 from budgeting_app import app, db, bcrypt
 from flask_login import login_user, current_user, logout_user, login_required
 
+deposit_ledger = dict()
+withdraw_ledger = dict()
+
 @app.route("/")
 @app.route("/home")
 def index():
@@ -56,21 +59,71 @@ def user_dashboard():
     depositform = DepositForm()
     spendingform = SpendingForm()
 
-    if depositform.deposit.data and depositform.validate_on_submit():
-        budget = Budget(deposit=depositform.deposit.data, user_id=current_user.id)
+    if depositform.deposit_category.data and depositform.deposit_amount.data and depositform.validate_on_submit():
+        if depositform.deposit_description.data is None:
+            depositform.deposit_description = depositform.deposit_category.data
+        budget = Budget(
+            deposit_category=depositform.deposit_category.data, 
+            deposit_description=depositform.deposit_description.data,
+            deposit_amount=depositform.deposit_amount.data,
+            user_id=current_user.id
+            )
         db.session.add(budget)
         db.session.commit()
         flash('Deposit added!', 'success')
+        if deposit_ledger.get(depositform.deposit_category.data, 0):
+            value = deposit_ledger.get(depositform.deposit_category.data)
+            deposit_ledger[depositform.deposit_category.data] = int(value) + int(depositform.deposit_amount.data)
+        else:
+            deposit_ledger[depositform.deposit_category.data] = int(depositform.deposit_amount.data)
         return redirect(url_for('user_dashboard'))
-         
-    if spendingform.category.data and spendingform.amount.data and spendingform.validate_on_submit():
-        budget = Budget(category=spendingform.category.data, amount=spendingform.amount.data, user_id=current_user.id)
+
+       
+    if spendingform.withdraw_category.data and spendingform.withdraw_amount.data and spendingform.validate_on_submit():
+        if spendingform.withdraw_description.data is None:
+            spendingform.withdraw_description = spendingform.withdraw_category.data
+        budget = Budget(
+            withdraw_category=spendingform.withdraw_category.data,
+            withdraw_description=spendingform.withdraw_description.data,
+            withdraw_amount=spendingform.withdraw_amount.data, 
+            user_id=current_user.id
+            )
         db.session.add(budget)
         db.session.commit()
         flash('Withdrawal added!', 'success')
+        if withdraw_ledger.get(spendingform.withdraw_category.data, 0):
+            value = withdraw_ledger.get(spendingform.withdraw_category.data)
+            withdraw_ledger[spendingform.withdraw_category.data] = int(value) + int(spendingform.withdraw_amount.data)
+        else:
+            withdraw_ledger[spendingform.withdraw_category.data] = int(spendingform.withdraw_amount.data)
         return redirect(url_for('user_dashboard'))
 
-    headings = ('Date Posted','Deposits', 'Categories', 'Withdrawals')
-    result = Budget.query.with_entities(Budget.date_posted, Budget.deposit, Budget.category, Budget.amount)
+    headings = ('Deposit', 'Amount', 'Withdrawal', 'Amount')
+    result = Budget.query.filter_by(user_id=current_user.id).with_entities(Budget.deposit_category, Budget.deposit_amount, Budget.withdraw_category, Budget.withdraw_amount)
+ 
+    return render_template("public/dashboard.html", depositform=depositform, spendingform=spendingform, result=result, headings=headings, deposit_ledger=deposit_ledger, withdraw_ledger=withdraw_ledger) 
 
-    return render_template("public/dashboard.html", depositform=depositform, spendingform=spendingform, result=result, headings=headings)
+@app.route("/transactions")
+@login_required
+def user_transactions():
+    headings = ('Date Posted','Income', 'Description', 'Amount', 'Expense', 'Description', 'Amount')
+    result = Budget.query.filter_by(user_id=current_user.id).with_entities(Budget.date_posted, Budget.deposit_category, Budget.deposit_description, Budget.deposit_amount, Budget.withdraw_category, Budget.withdraw_description, Budget.withdraw_amount)
+
+    return render_template("public/transactions.html", result=result, headings=headings)
+
+class TrackTransactions:
+    def __init__(self, category_name):
+        self.category_name = category_name
+        self.ledger = list()
+
+    def deposit(self, category_name, amount):
+        self.ledger.append({"category": category_name, "amount": amount})
+
+    def withdraw(self, category_name, amount):
+        self.ledger.append({"category": category_name, "amount": -amount})
+
+    def get_balance(self):
+        current_balance = 0
+        for entry in self.ledger:
+            current_balance += entry["amount"]
+        return current_balance

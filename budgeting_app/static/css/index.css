@@ -88,3 +88,7 @@ table {
   padding: 10px;
   text-align: center;
 }
+
+.link {
+  text-align: right;
+}

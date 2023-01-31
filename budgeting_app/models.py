@@ -20,14 +20,18 @@ class User(db.Model, UserMixin):
 class Budget(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     date_posted = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
-    deposit = db.Column(db.Integer)
-    category = db.Column(db.String(20))
-    amount = db.Column(db.Integer)
+    deposit_category = db.Column(db.String(20))
+    deposit_description = db.Column(db.String(20))
+    deposit_amount = db.Column(db.Integer)
+    withdraw_category = db.Column(db.String(20))
+    withdraw_description = db.Column(db.String(20))
+    withdraw_amount = db.Column(db.Integer)
     # add id foreign key
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
     def __repr__(self):
-        return f"Budget('{self.date_posted}', '{self.deposit}', '{self.category}', '{self.amount}')"
+        return f"Budget('{self.date_posted}', '{self.deposit_category}', '{self.deposit_amount}', '{self.withdraw_category}, '{self.withdraw_amount}')"
+
 
 """
 To create the database

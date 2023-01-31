@@ -1,0 +1,33 @@
+{% extends "public/templates/public_template.html" %}
+{% block title %}transactions{% endblock %}
+
+{% block main %}
+
+<div class="container">
+    <h2>Transactions</h2>
+    <table class="table">
+        <tr class="table_header">
+            {% for header in headings %}
+            <th class="table_cell">{{ header }}</th>
+            {% endfor %}
+        </tr>
+        {% for row in result %}
+        <tr class="table_row">
+            {% for cell in row %}
+            <!-- TODO: REMOVE TIME IN STATEMENT -->
+            <td class="table_cell">
+                {% if cell == None %}
+                {{ "-" }}
+                {% elif cell == result.date_posted %}
+                {{ result.date_posted.strftime('%Y-%b-%d %H:%M') }}
+                {% else %}
+                {{ cell }}
+                {% endif %}
+            </td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+{% endblock %}

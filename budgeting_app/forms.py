@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, IntegerField
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, IntegerField, TextAreaField, SelectField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
 from budgeting_app.models import User
 
@@ -29,11 +29,14 @@ class LoginForm(FlaskForm):
     submit = SubmitField('Log In')
 
 class DepositForm(FlaskForm):
-    deposit = IntegerField('Deposit', validators=[DataRequired()])
-    submit = SubmitField('Add Deposit')
+    deposit_category = SelectField('Category', choices=['Paycheck', 'Savings', 'Bonus', 'Interest', 'Other', 'Custom'], validators=[DataRequired()])
+    deposit_description = StringField('Description')
+    deposit_amount = IntegerField('Amount', validators=[DataRequired()])
+    submit = SubmitField('Add Income')
 
 class SpendingForm(FlaskForm):
-    category = StringField('Category', validators=[DataRequired()])
-    amount = IntegerField('Amount', validators=[DataRequired()])
-    submit = SubmitField('Add Spending')
+    withdraw_category = SelectField('Category', choices=['Auto', 'Utilities', 'Health/Medical', 'Home', 'Personal', 'Travel', 'Debt', 'Entertainment', 'Dining', 'Miscellaneous', 'Transportation', 'Education', 'Custom'], validators=[DataRequired()])
+    withdraw_description = StringField('Description')
+    withdraw_amount = IntegerField('Amount', validators=[DataRequired()])
+    submit = SubmitField('Add Expense')
 
