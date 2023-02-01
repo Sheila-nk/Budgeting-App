@@ -57,28 +57,47 @@
 <div class="container">
     <hr>
     <h2>Transactions</h2>
-    <table class="table">
-        <tr class="table_header">
-            {% for header in headings %}
-            <th class="table_cell">{{ header }}</th>
-            {% endfor %}
-        </tr>
-        {% for row in result %}
-        <tr class="table_row">
-            {% for cell in row %}
-            <!-- TODO: REMOVE TIME IN STATEMENT -->
-            <td class="table_cell">
-                {% if cell == None %}
-                {{ "-" }}
-                {% else %}
-                {{ cell }}
-                {% endif %}
-            </td>
-            {% endfor %}
-        </tr>
-        {% endfor %}
-    </table>
+    <div class="row">
+        <div class="col">
+            <table class="table">
+                <tr class="table_header">
+                    {% for header in d_headings %}
+                    <th class="table_cell">{{ header }}</th>
+                    {% endfor %}
+                </tr>
+                {% for key, value in deposit_ledger.items() %}
+                <tr class="table_row">
+                    <td class="table_cell">
+                        {{ key }}
+                    </td>
+                    <td class="table_cell">
+                        {{ value }}
+                    </td>
+                    {% endfor %}
+                </tr>
+            </table>
+        </div>
 
+        <div class="col">
+            <table class="table">
+                <tr class="table_header">
+                    {% for header in w_headings %}
+                    <th class="table_cell">{{ header }}</th>
+                    {% endfor %}
+                </tr>
+                {% for key, value in withdraw_ledger.items() %}
+                <tr class="table_row">
+                    <td class="table_cell">
+                        {{ key }}
+                    </td>
+                    <td class="table_cell">
+                        {{ value }}
+                    </td>
+                    {% endfor %}
+                </tr>
+            </table>
+        </div>
+    </div>
 
     <div class="link">
         <a href="{{url_for('user_transactions')}}">Edit/View Full Transactions</a>

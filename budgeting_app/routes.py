@@ -3,9 +3,7 @@ from budgeting_app.forms import RegistrationForm, LoginForm, DepositForm, Spendi
 from budgeting_app.models import User, Budget
 from budgeting_app import app, db, bcrypt
 from flask_login import login_user, current_user, logout_user, login_required
-
-deposit_ledger = dict()
-withdraw_ledger = dict()
+from collections import OrderedDict
 
 @app.route("/")
 @app.route("/home")
@@ -71,11 +69,7 @@ def user_dashboard():
         db.session.add(budget)
         db.session.commit()
         flash('Deposit added!', 'success')
-        if deposit_ledger.get(depositform.deposit_category.data, 0):
-            value = deposit_ledger.get(depositform.deposit_category.data)
-            deposit_ledger[depositform.deposit_category.data] = int(value) + int(depositform.deposit_amount.data)
-        else:
-            deposit_ledger[depositform.deposit_category.data] = int(depositform.deposit_amount.data)
+        
         return redirect(url_for('user_dashboard'))
 
        
@@ -91,17 +85,29 @@ def user_dashboard():
         db.session.add(budget)
         db.session.commit()
         flash('Withdrawal added!', 'success')
-        if withdraw_ledger.get(spendingform.withdraw_category.data, 0):
-            value = withdraw_ledger.get(spendingform.withdraw_category.data)
-            withdraw_ledger[spendingform.withdraw_category.data] = int(value) + int(spendingform.withdraw_amount.data)
-        else:
-            withdraw_ledger[spendingform.withdraw_category.data] = int(spendingform.withdraw_amount.data)
+       
         return redirect(url_for('user_dashboard'))
 
-    headings = ('Deposit', 'Amount', 'Withdrawal', 'Amount')
+    deposit_ledger = OrderedDict()
+    withdraw_ledger = OrderedDict()
+    d_headings = ('Deposit', 'Amount')
+    w_headings = ('Withdrawal', 'Amount')
     result = Budget.query.filter_by(user_id=current_user.id).with_entities(Budget.deposit_category, Budget.deposit_amount, Budget.withdraw_category, Budget.withdraw_amount)
+    for row in result:
+        if row[0]:
+            deposit = row[0]
+            if deposit_ledger.get(deposit):
+                deposit_ledger[deposit] += row[1]
+            else:
+                deposit_ledger[deposit] = row[1]
+        else:
+            withdraw = row[2]
+            if withdraw_ledger.get(withdraw):
+                withdraw_ledger[withdraw] += row[3]
+            else:
+                withdraw_ledger[withdraw] = row[3]
  
-    return render_template("public/dashboard.html", depositform=depositform, spendingform=spendingform, result=result, headings=headings, deposit_ledger=deposit_ledger, withdraw_ledger=withdraw_ledger) 
+    return render_template("public/dashboard.html", depositform=depositform, spendingform=spendingform, d_headings=d_headings, w_headings=w_headings, deposit_ledger=deposit_ledger, withdraw_ledger=withdraw_ledger)
 
 @app.route("/transactions")
 @login_required
@@ -110,20 +116,3 @@ def user_transactions():
     result = Budget.query.filter_by(user_id=current_user.id).with_entities(Budget.date_posted, Budget.deposit_category, Budget.deposit_description, Budget.deposit_amount, Budget.withdraw_category, Budget.withdraw_description, Budget.withdraw_amount)
 
     return render_template("public/transactions.html", result=result, headings=headings)
-
-class TrackTransactions:
-    def __init__(self, category_name):
-        self.category_name = category_name
-        self.ledger = list()
-
-    def deposit(self, category_name, amount):
-        self.ledger.append({"category": category_name, "amount": amount})
-
-    def withdraw(self, category_name, amount):
-        self.ledger.append({"category": category_name, "amount": -amount})
-
-    def get_balance(self):
-        current_balance = 0
-        for entry in self.ledger:
-            current_balance += entry["amount"]
-        return current_balance

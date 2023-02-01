@@ -33,6 +33,7 @@ class Budget(db.Model):
         return f"Budget('{self.date_posted}', '{self.deposit_category}', '{self.deposit_amount}', '{self.withdraw_category}, '{self.withdraw_amount}')"
 
 
+
 """
 To create the database
 db.init_app(app)
