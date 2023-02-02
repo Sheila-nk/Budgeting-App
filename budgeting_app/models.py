@@ -31,18 +31,3 @@ class Budget(db.Model):
 
     def __repr__(self):
         return f"Budget('{self.date_posted}', '{self.deposit_category}', '{self.deposit_amount}', '{self.withdraw_category}, '{self.withdraw_amount}')"
-
-
-
-"""
-To create the database
-db.init_app(app)
-
-To initialize database
-from budgeting_app import app, db
-app.app_context().push()
-db.create_all()
-
-To delete the table and content
-db.drop_all()
-"""

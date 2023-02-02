@@ -90,6 +90,7 @@ def user_dashboard():
 
     deposit_ledger = OrderedDict()
     withdraw_ledger = OrderedDict()
+        
     d_headings = ('Deposit', 'Amount')
     w_headings = ('Withdrawal', 'Amount')
     result = Budget.query.filter_by(user_id=current_user.id).with_entities(Budget.deposit_category, Budget.deposit_amount, Budget.withdraw_category, Budget.withdraw_amount)
@@ -106,6 +107,7 @@ def user_dashboard():
                 withdraw_ledger[withdraw] += row[3]
             else:
                 withdraw_ledger[withdraw] = row[3]
+    
  
     return render_template("public/dashboard.html", depositform=depositform, spendingform=spendingform, d_headings=d_headings, w_headings=w_headings, deposit_ledger=deposit_ledger, withdraw_ledger=withdraw_ledger)
 
