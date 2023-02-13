@@ -4,6 +4,7 @@ from budgeting_app.models import User, Budget
 from budgeting_app import app, db, bcrypt
 from flask_login import login_user, current_user, logout_user, login_required
 from collections import OrderedDict
+import matplotlib.pyplot as plt
 
 
 @app.route("/")
@@ -63,7 +64,34 @@ def logout():
 @login_required
 def user_profile():
     # Display a user's profile
-    return render_template("public/profile.html")
+    data = {'Category': 'Amount'}
+    withdraw_total = 0
+    deposit_total = 0
+    withdraw_results = Budget.query.filter_by(user_id=current_user.id).with_entities(
+        Budget.withdraw_category,
+        Budget.withdraw_amount
+    )
+    for entry in withdraw_results:
+        if entry[0]:
+            if data.get(entry[0]):
+                data[entry[0]] += entry[1]               
+            else:
+                data[entry[0]] = entry[1]
+            withdraw_total += entry[1]
+    print(withdraw_total)
+    
+    deposit_results = Budget.query.filter_by(user_id=current_user.id).with_entities(
+        Budget.deposit_category,
+        Budget.deposit_amount
+    )
+    for entry in deposit_results:
+        if entry[0]:
+            deposit_total += entry[1]
+    print(deposit_total)
+    balance = deposit_total - withdraw_total
+            
+
+    return render_template("public/profile.html", data=data, deposit_total=deposit_total, withdraw_total=withdraw_total, balance=balance)
 
 
 @app.route("/dashboard", methods=["GET", "POST"])

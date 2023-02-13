@@ -92,3 +92,9 @@ table {
 .link {
   text-align: right;
 }
+
+.table_row_1 {
+  background-color: #dc4c28;
+  font-weight: bolder;
+  color: white;
+}

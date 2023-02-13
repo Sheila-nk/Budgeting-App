@@ -1,16 +1,70 @@
 {% extends "public/templates/public_template.html" %}
 
+{% block head %}
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script type="text/javascript">
+    google.charts.load('current', { 'packages': ['corechart'] });
+    google.charts.setOnLoadCallback(drawChart);
+
+    function drawChart() {
+
+        var data = google.visualization.arrayToDataTable([
+            {% for key, value in data.items() %}
+                {% if value is string %}
+                    ['{{ key }}', '{{ vlaue }}'],
+                {% else %}
+                    ['{{ key }}', {{ value }}],
+                {% endif %}
+            {% endfor %}
+        ]);
+
+    var options = {
+        title: 'Spending Habits'
+    };
+
+    var chart = new google.visualization.PieChart(document.getElementById('piechart'));
+
+    chart.draw(data, options);
+      }
+</script>
+{% endblock %}
+
 {% block title %}Profile{% endblock %}
 
 {% block main %}
 
 <div class="container">
+    <h1>{{ current_user.firstname }}</h1>
     <div class="row">
         <div class="col">
-            <h1>{{ current_user.firstname }}</h1>
+            <table class="table">
+                <tr class="table_header">
+                    <th class="table_cell">Income</th>
+                    <th class="table_cell">Spending</th>
+                </tr>
+                <tr class="table_row">
+                    <td class="table_cell">
+                        {{ deposit_total }}
+                    </td>
+                    <td class="table_cell">
+                        {{ withdraw_total }}
+                    </td>
+                </tr>
+                <tr class="table_row_1">
+                    <td class="table_cell">
+                        Balance
+                    </td>
+                    <td class="table_cell">
+                        {{ balance }}
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="col">
             
         </div>
     </div>
+    <div id="piechart" style="width: 900px; height: 500px;"></div>
 </div>
 
 {% endblock %}
